@@ -26,21 +26,32 @@ const Index = () => {
 
   // Check for existing session on mount
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
+    if (supabase) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+      });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ?? null);
+      });
 
-    return () => subscription.unsubscribe();
+      return () => subscription.unsubscribe();
+    }
   }, []);
 
   // Authentication functions
   const signIn = async (email: string, password: string) => {
+    if (!supabase) {
+      toast({
+        title: "Supabase não conectado",
+        description: "Conecte o Supabase para usar autenticação.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -65,6 +76,15 @@ const Index = () => {
   };
 
   const signUp = async (name: string, email: string, password: string) => {
+    if (!supabase) {
+      toast({
+        title: "Supabase não conectado",
+        description: "Conecte o Supabase para usar autenticação.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -94,7 +114,9 @@ const Index = () => {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
     setUser(null);
     setMessages([]);
     toast({
@@ -105,6 +127,15 @@ const Index = () => {
 
   // Save note function
   const saveNote = async (title: string, content: string) => {
+    if (!supabase) {
+      toast({
+        title: "Supabase não conectado",
+        description: "Conecte o Supabase para salvar anotações.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     if (!user) {
       toast({
         title: "Login necessário",
