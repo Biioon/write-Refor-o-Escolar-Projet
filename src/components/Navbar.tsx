@@ -1,7 +1,6 @@
 import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { LogIn, LogOut, User as UserIcon } from "lucide-react";
-import { LearningLink } from "./LearningLink";
 
 interface NavbarProps {
   user: User | null;
@@ -22,7 +21,6 @@ export const Navbar = ({ user, onAuthOpen, onSignOut }: NavbarProps) => {
       </div>
       
       <div className="flex items-center gap-3">
-        <LearningLink />
         {user ? (
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-secondary">

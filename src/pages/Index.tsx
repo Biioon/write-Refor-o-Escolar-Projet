@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
-import { callLLM, sendDataToWebhook } from "@/lib/supabase";
+import { supabase, callLLM, sendDataToWebhook } from "@/lib/supabase";
 import { Navbar } from "@/components/Navbar";
 import { Sidebar } from "@/components/Sidebar";
 import { ChatArea } from "@/components/ChatArea";
 import { AuthModal } from "@/components/AuthModal";
-import { toast } from "@/hooks/use-toast";
-import { sanitizeText, sanitizeNote, validateTextLength, validateEmail, validatePassword } from "@/lib/validation";
+import { toast } from "@/components/ui/use-toast";
 
 interface Message {
   id: number;
@@ -88,13 +86,10 @@ const Index = () => {
     }
     
     try {
-      const redirectUrl = `${window.location.origin}/`;
-      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl,
           data: {
             name,
           },
@@ -107,7 +102,7 @@ const Index = () => {
       setAuthOpen(false);
       toast({
         title: "Conta criada!",
-        description: "Bem-vindo ao BII0ON! Verifique seu email se necessário.",
+        description: "Bem-vindo ao BII0ON!",
       });
     } catch (err: any) {
       toast({
@@ -135,7 +130,7 @@ const Index = () => {
     if (!supabase) {
       toast({
         title: "Supabase não conectado",
-        description: "Conecte o Supabase para usar autenticação.",
+        description: "Conecte o Supabase para salvar anotações.",
         variant: "destructive",
       });
       return;
@@ -150,35 +145,13 @@ const Index = () => {
       return;
     }
 
-    // Validate and sanitize inputs
-    const sanitizedTitle = sanitizeText(title);
-    const sanitizedContent = sanitizeNote(content);
-    
-    if (!validateTextLength(sanitizedTitle, 200)) {
-      toast({
-        title: "Título inválido",
-        description: "O título deve ter entre 1 e 200 caracteres.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (!validateTextLength(sanitizedContent, 10000)) {
-      toast({
-        title: "Conteúdo inválido",
-        description: "O conteúdo deve ter entre 1 e 10000 caracteres.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
       const { error } = await supabase
         .from('notes')
         .insert([
           {
-            title: sanitizedTitle,
-            content: sanitizedContent,
+            title,
+            content,
             user_id: user.id,
           },
         ]);
@@ -186,13 +159,13 @@ const Index = () => {
       if (error) throw error;
 
       // Send data to webhook
-      await sendDataToWebhook({ title: sanitizedTitle, content: sanitizedContent, user_id: user.id });
+      await sendDataToWebhook({ title, content, user_id: user.id });
 
       setMessages(prev => [
         ...prev,
         {
           id: Date.now(),
-          text: `Nota "${sanitizedTitle}" salva com sucesso! 📝`,
+          text: `Nota "${title}" salva com sucesso! 📝`,
           from: 'bot',
           ts: Date.now(),
         },
@@ -200,7 +173,7 @@ const Index = () => {
 
       toast({
         title: "Anotação salva!",
-        description: `"${sanitizedTitle}" foi salva no seu caderno.`,
+        description: `"${title}" foi salva no seu caderno.`,
       });
     } catch (err: any) {
       toast({
@@ -215,21 +188,9 @@ const Index = () => {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    // Validate and sanitize input
-    const sanitizedInput = sanitizeText(input);
-    
-    if (!validateTextLength(sanitizedInput, 1000)) {
-      toast({
-        title: "Mensagem muito longa",
-        description: "A mensagem deve ter no máximo 1000 caracteres.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const userMessage: Message = {
       id: Date.now(),
-      text: sanitizedInput,
+      text: input,
       from: 'user',
       ts: Date.now(),
     };
@@ -239,10 +200,10 @@ const Index = () => {
     setLoading(true);
 
     try {
-      const context = messages.map(m => `${m.from}: ${sanitizeText(m.text)}`).join('\n');
+      const context = messages.map(m => `${m.from}: ${m.text}`).join('\n');
       const response = await callLLM({
         persona,
-        input_text: sanitizedInput,
+        input_text: userMessage.text,
         context,
       });
 
@@ -250,7 +211,7 @@ const Index = () => {
         ...prev,
         {
           id: Date.now() + 1,
-          text: sanitizeText(response.reply || "Desculpe, não consegui processar sua mensagem."),
+          text: response.reply || "Desculpe, não consegui processar sua mensagem.",
           from: 'bot',
           ts: Date.now(),
         },

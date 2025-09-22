@@ -10,8 +10,6 @@ import {
   DialogTitle 
 } from "@/components/ui/dialog";
 import { LogIn, UserPlus, X } from "lucide-react";
-import { validateEmail, validatePassword, sanitizeText } from "@/lib/validation";
-import { toast } from "@/hooks/use-toast";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -27,48 +25,10 @@ export const AuthModal = ({ isOpen, onClose, onSignIn, onSignUp }: AuthModalProp
   const [name, setName] = useState('');
 
   const handleSubmit = () => {
-    // Validate inputs
-    if (!validateEmail(email)) {
-      toast({
-        title: "Email inválido",
-        description: "Por favor, insira um email válido.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (mode === 'signup') {
-      const sanitizedName = sanitizeText(name);
-      if (!sanitizedName.trim()) {
-        toast({
-          title: "Nome obrigatório",
-          description: "Por favor, insira seu nome.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const passwordValidation = validatePassword(password);
-      if (!passwordValidation.valid) {
-        toast({
-          title: "Senha inválida",
-          description: passwordValidation.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      onSignUp(sanitizedName, email, password);
-    } else {
-      if (!password.trim()) {
-        toast({
-          title: "Senha obrigatória",
-          description: "Por favor, insira sua senha.",
-          variant: "destructive",
-        });
-        return;
-      }
+    if (mode === 'login') {
       onSignIn(email, password);
+    } else {
+      onSignUp(name, email, password);
     }
   };
 
