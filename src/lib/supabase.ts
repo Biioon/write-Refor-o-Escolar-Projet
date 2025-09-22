@@ -1,10 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
 
-// Note: In production, these should be set via environment variables
-const supabaseUrl = "YOUR_SUPABASE_URL";
-const supabaseAnonKey = "YOUR_SUPABASE_ANON_KEY";
+// Check if Supabase is configured
+const supabaseUrl = process.env.VITE_SUPABASE_URL || "";
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || "";
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Only create client if we have valid URLs
+export const supabase = supabaseUrl && supabaseAnonKey && supabaseUrl.startsWith('http') 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
 // Mock LLM API call for development
 export async function callLLM({ persona, input_text, context }: {
