@@ -6,7 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { Sidebar } from "@/components/Sidebar";
 import { ChatArea } from "@/components/ChatArea";
 import { AuthModal } from "@/components/AuthModal";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { sanitizeText, sanitizeNote, validateTextLength, validateEmail, validatePassword } from "@/lib/validation";
 
 interface Message {
