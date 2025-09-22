@@ -1,13 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
-
-// Check if Supabase is configured
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
-
-// Only create client if we have valid URLs
-export const supabase = supabaseUrl && supabaseAnonKey && supabaseUrl.startsWith('http') 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+import { supabase } from "@/integrations/supabase/client";
 
 // Mock LLM API call for development
 export async function callLLM({ persona, input_text, context }: {

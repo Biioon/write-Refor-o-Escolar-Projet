@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
-import { supabase, callLLM, sendDataToWebhook } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
+import { callLLM, sendDataToWebhook } from "@/lib/supabase";
 import { Navbar } from "@/components/Navbar";
 import { Sidebar } from "@/components/Sidebar";
 import { ChatArea } from "@/components/ChatArea";
