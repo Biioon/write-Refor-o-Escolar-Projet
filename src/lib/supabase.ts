@@ -1,4 +1,10 @@
-import { supabase } from "@/integrations/supabase/client";
+import { createClient } from "@supabase/supabase-js";
+
+// Note: In production, these should be set via environment variables
+const supabaseUrl = "YOUR_SUPABASE_URL";
+const supabaseAnonKey = "YOUR_SUPABASE_ANON_KEY";
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Mock LLM API call for development
 export async function callLLM({ persona, input_text, context }: {
