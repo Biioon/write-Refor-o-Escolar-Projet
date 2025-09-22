@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { LogIn, UserPlus, X } from "lucide-react";
 import { validateEmail, validatePassword, sanitizeText } from "@/lib/validation";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 interface AuthModalProps {
   isOpen: boolean;
