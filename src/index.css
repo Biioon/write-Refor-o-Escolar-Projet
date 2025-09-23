@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Educational theme colors */
+    /* Educational theme colors - Mobile optimized */
     --background: 220 26% 14%;
     --foreground: 220 9% 96%;
     
@@ -74,6 +74,11 @@ All colors MUST be HSL.
     
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Mobile-specific spacing */
+    --mobile-padding: 1rem;
+    --mobile-margin: 0.75rem;
+    --touch-target: 44px;
   }
 
   .light {
@@ -94,5 +99,21 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    /* Mobile font optimization */
+    font-size: 16px; /* Prevents zoom on iOS */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+  
+  /* Mobile touch improvements */
+  button, input, select, textarea {
+    min-height: var(--touch-target);
+    touch-action: manipulation;
+  }
+  
+  /* Responsive images */
+  img {
+    max-width: 100%;
+    height: auto;
   }
 }

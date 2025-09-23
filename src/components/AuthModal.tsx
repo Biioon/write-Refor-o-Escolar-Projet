@@ -80,22 +80,22 @@ export const AuthModal = ({ isOpen, onClose, onSignIn, onSignUp }: AuthModalProp
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md mx-4 rounded-lg">
         <DialogHeader>
-          <DialogTitle className="text-center">
-            Bem-vindo ao BII0ON
+          <DialogTitle className="text-center text-lg md:text-xl">
+            Bem-vindo ao Writer Reforço Escolar
           </DialogTitle>
         </DialogHeader>
 
         <Tabs value={mode} onValueChange={(value) => setMode(value as 'login' | 'signup')}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-2 h-12">
+            <TabsTrigger value="login" className="flex items-center gap-2 text-sm md:text-base">
               <LogIn className="w-4 h-4" />
-              Entrar
+              <span className="hidden xs:inline">Entrar</span>
             </TabsTrigger>
-            <TabsTrigger value="signup" className="flex items-center gap-2">
+            <TabsTrigger value="signup" className="flex items-center gap-2 text-sm md:text-base">
               <UserPlus className="w-4 h-4" />
-              Cadastrar
+              <span className="hidden xs:inline">Cadastrar</span>
             </TabsTrigger>
           </TabsList>
 
@@ -106,7 +106,7 @@ export const AuthModal = ({ isOpen, onClose, onSignIn, onSignUp }: AuthModalProp
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="bg-secondary border-border"
+              className="bg-secondary border-border text-base h-12"
             />
             <Input
               placeholder="Sua senha"
@@ -114,11 +114,11 @@ export const AuthModal = ({ isOpen, onClose, onSignIn, onSignUp }: AuthModalProp
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="bg-secondary border-border"
+              className="bg-secondary border-border text-base h-12"
             />
             <Button 
               onClick={handleSubmit}
-              className="w-full bg-gradient-primary hover:opacity-90"
+              className="w-full bg-gradient-primary hover:opacity-90 h-12 text-base font-medium"
             >
               Entrar
             </Button>
@@ -130,7 +130,7 @@ export const AuthModal = ({ isOpen, onClose, onSignIn, onSignUp }: AuthModalProp
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="bg-secondary border-border"
+              className="bg-secondary border-border text-base h-12"
             />
             <Input
               placeholder="Seu email"
@@ -138,19 +138,19 @@ export const AuthModal = ({ isOpen, onClose, onSignIn, onSignUp }: AuthModalProp
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="bg-secondary border-border"
+              className="bg-secondary border-border text-base h-12"
             />
             <Input
-              placeholder="Sua senha"
+              placeholder="Sua senha (mín. 8 caracteres)"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="bg-secondary border-border"
+              className="bg-secondary border-border text-base h-12"
             />
             <Button 
               onClick={handleSubmit}
-              className="w-full bg-gradient-primary hover:opacity-90"
+              className="w-full bg-gradient-primary hover:opacity-90 h-12 text-base font-medium"
             >
               Criar Conta
             </Button>

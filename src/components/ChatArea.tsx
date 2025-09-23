@@ -29,6 +29,10 @@ interface ChatAreaProps {
   onSend: () => void;
   loading: boolean;
   onSaveNote: (title: string, content: string) => void;
+  persona?: string;
+  setPersona?: (persona: string) => void;
+  themeSelection?: string;
+  setThemeSelection?: (theme: string) => void;
 }
 
 export const ChatArea = ({ 
@@ -38,8 +42,12 @@ export const ChatArea = ({
   input, 
   setInput, 
   onSend, 
-  loading,
-  onSaveNote 
+  loading, 
+  onSaveNote,
+  persona,
+  setPersona,
+  themeSelection,
+  setThemeSelection
 }: ChatAreaProps) => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -49,105 +57,114 @@ export const ChatArea = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col">
-      <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col">
-        <div className="border-b border-border bg-background">
-          <TabsList className="grid w-full grid-cols-2 max-w-md mx-6 mt-4">
-            <TabsTrigger value="chat" className="flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" />
-              Chat
-            </TabsTrigger>
-            <TabsTrigger value="caderno" className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
-              Caderno
-            </TabsTrigger>
-          </TabsList>
+    <div className="flex-1 flex flex-col bg-card">
+      {/* Mobile settings panel */}
+      <div className="md:hidden bg-secondary/50 border-b border-border">
+        <div className="flex items-center justify-between p-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Persona:</span>
+            <select 
+              value={persona || 'amigo'} 
+              onChange={(e) => setPersona?.(e.target.value)}
+              className="bg-secondary text-foreground text-sm rounded px-2 py-1 border border-border"
+            >
+              <option value="amigo">👥 Amigo</option>
+              <option value="professor">👨‍🏫 Professor</option>
+              <option value="mentor">🧙‍♂️ Mentor</option>
+            </select>
+          </div>
         </div>
+      </div>
+      
+      <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col">
+        <TabsList className="grid w-full grid-cols-2 mx-3 md:mx-4 mt-3 md:mt-4">
+          <TabsTrigger value="chat" className="flex items-center gap-2 text-sm">
+            <MessageCircle className="w-4 h-4" />
+            <span className="hidden xs:inline">Chat</span>
+          </TabsTrigger>
+          <TabsTrigger value="caderno" className="flex items-center gap-2 text-sm">
+            <BookOpen className="w-4 h-4" />
+            <span className="hidden xs:inline">Caderno</span>
+          </TabsTrigger>
+        </TabsList>
 
-        <TabsContent value="chat" className="flex-1 flex flex-col m-0">
-          <div className="flex-1 overflow-auto p-6 space-y-4 bg-background">
+        <TabsContent value="chat" className="flex-1 flex flex-col mt-0">
+          <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
             {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center">
-                <Bot className="w-12 h-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  Olá! Como posso ajudar?
-                </h3>
-                <p className="text-muted-foreground">
-                  Faça uma pergunta ou conte sobre o que está estudando
-                </p>
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                <div className="text-center px-4">
+                  <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-base md:text-lg font-medium">Inicie uma conversa!</p>
+                  <p className="text-sm mt-2">Digite sua pergunta abaixo.</p>
+                </div>
               </div>
             ) : (
               messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex gap-3 ${
+                  className={`flex gap-2 md:gap-3 ${
                     message.from === 'user' ? 'justify-end' : 'justify-start'
                   }`}
                 >
                   {message.from === 'bot' && (
-                    <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
-                      <Bot className="w-4 h-4 text-white" />
+                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-1">
+                      <Bot className="w-4 h-4 text-primary-foreground" />
                     </div>
                   )}
-                  
-                  <Card className={`max-w-[80%] p-4 ${
-                    message.from === 'user' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-card'
-                  }`}>
-                    <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                  <div
+                    className={`max-w-[85%] md:max-w-[80%] p-3 md:p-4 rounded-lg ${
+                      message.from === 'user'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-secondary text-secondary-foreground'
+                    }`}
+                  >
+                    <p className="text-sm md:text-base whitespace-pre-wrap leading-relaxed">{message.text}</p>
                     <span className="text-xs opacity-70 mt-2 block">
                       {new Date(message.ts).toLocaleTimeString()}
                     </span>
-                  </Card>
-
+                  </div>
                   {message.from === 'user' && (
-                    <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-                      <User className="w-4 h-4 text-foreground" />
+                    <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center flex-shrink-0 mt-1">
+                      <User className="w-4 h-4 text-accent-foreground" />
                     </div>
                   )}
                 </div>
               ))
             )}
-            
             {loading && (
-              <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-white" />
+              <div className="flex justify-start gap-2 md:gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-1">
+                  <Bot className="w-4 h-4 text-primary-foreground" />
                 </div>
-                <Card className="p-4 bg-card">
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="text-sm text-muted-foreground">
-                      Pensando...
-                    </span>
+                <div className="bg-secondary p-3 md:p-4 rounded-lg">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
-                </Card>
+                </div>
               </div>
             )}
           </div>
 
-          <div className="p-6 border-t border-border bg-background">
-            <div className="flex items-center gap-3">
+          {/* Mobile-optimized input area */}
+          <div className="border-t border-border p-3 md:p-4 bg-background/95 backdrop-blur">
+            <div className="flex gap-2">
               <Input
+                placeholder="Digite sua mensagem..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Digite sua dúvida ou conte o que está estudando..."
-                className="flex-1 bg-secondary border-border"
+                className="flex-1 text-base" // 16px prevents zoom on iOS
                 disabled={loading}
               />
-              <Button
-                onClick={onSend}
+              <Button 
+                onClick={onSend} 
                 disabled={loading || !input.trim()}
-                size="sm"
-                className="bg-gradient-primary hover:opacity-90"
+                size="icon"
+                className="bg-gradient-primary hover:opacity-90 min-h-[44px] min-w-[44px]"
               >
-                {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
-                )}
+                <Send className="w-4 h-4" />
               </Button>
             </div>
           </div>

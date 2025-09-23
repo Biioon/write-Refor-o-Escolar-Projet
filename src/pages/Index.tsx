@@ -271,27 +271,37 @@ const Index = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-background">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       <Navbar user={user} onAuthOpen={() => setAuthOpen(true)} onSignOut={signOut} />
       
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar
-          persona={persona}
-          setPersona={setPersona}
-          themeSelection={themeSelection}
-          setThemeSelection={setThemeSelection}
-        />
+        {/* Mobile responsive sidebar */}
+        <div className="hidden md:block">
+          <Sidebar
+            persona={persona}
+            setPersona={setPersona}
+            themeSelection={themeSelection}
+            setThemeSelection={setThemeSelection}
+          />
+        </div>
         
-        <ChatArea
-          tab={tab}
-          setTab={setTab}
-          messages={messages}
-          input={input}
-          setInput={setInput}
-          onSend={sendMessage}
-          loading={loading}
-          onSaveNote={saveNote}
-        />
+        {/* Main chat area - full width on mobile */}
+        <div className="flex-1 min-w-0">
+          <ChatArea
+            tab={tab}
+            setTab={setTab}
+            messages={messages}
+            input={input}
+            setInput={setInput}
+            onSend={sendMessage}
+            loading={loading}
+            onSaveNote={saveNote}
+            persona={persona}
+            setPersona={setPersona}
+            themeSelection={themeSelection}
+            setThemeSelection={setThemeSelection}
+          />
+        </div>
       </div>
 
       <AuthModal
