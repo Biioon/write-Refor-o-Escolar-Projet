@@ -270,13 +270,18 @@ const Index = () => {
     }
   };
 
+  // Aplicar tema
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', themeSelection);
+  }, [themeSelection]);
+
   return (
     <div className="flex flex-col h-screen bg-background overflow-hidden">
       <Navbar user={user} onAuthOpen={() => setAuthOpen(true)} onSignOut={signOut} />
       
       <div className="flex flex-1 overflow-hidden">
-        {/* Mobile responsive sidebar */}
-        <div className="hidden md:block">
+        {/* Sidebar sempre visível - reorganizado para mobile */}
+        <div className="w-16 md:w-64 flex-shrink-0">
           <Sidebar
             persona={persona}
             setPersona={setPersona}
@@ -285,7 +290,7 @@ const Index = () => {
           />
         </div>
         
-        {/* Main chat area - full width on mobile */}
+        {/* Chat area - responsivo */}
         <div className="flex-1 min-w-0">
           <ChatArea
             tab={tab}

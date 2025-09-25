@@ -6,8 +6,11 @@ import {
   Rocket,
   Users,
   Heart,
-  GraduationCap
+  GraduationCap,
+  Menu,
+  Star
 } from "lucide-react";
+import { useState } from "react";
 
 interface SidebarProps {
   persona: string;
@@ -22,63 +25,114 @@ export const Sidebar = ({
   themeSelection, 
   setThemeSelection 
 }: SidebarProps) => {
+  const [collapsed, setCollapsed] = useState(false);
+  
   const themes = [
-    { id: 'default', icon: Palette, label: 'Padrão' },
-    { id: 'aventura', icon: TreePine, label: 'Aventura' },
-    { id: 'espaco', icon: Rocket, label: 'Espaço' }
+    { id: 'default', icon: Palette, label: 'Padrão', color: 'hsl(217 91% 60%)' },
+    { id: 'aventura', icon: TreePine, label: 'Aventura', color: 'hsl(142 70% 50%)' },
+    { id: 'espaco', icon: Rocket, label: 'Espaço', color: 'hsl(270 80% 65%)' }
   ];
 
   const personas = [
-    { id: 'amigo', icon: Users, label: 'Amigo(a)' },
-    { id: 'pai', icon: Heart, label: 'Pai/Mãe' },
-    { id: 'professor', icon: GraduationCap, label: 'Professor(a)' }
+    { id: 'amigo', icon: Users, label: 'Amigo(a)', emoji: '👥' },
+    { id: 'pai', icon: Heart, label: 'Pai/Mãe', emoji: '❤️' },
+    { id: 'professor', icon: GraduationCap, label: 'Professor(a)', emoji: '👨‍🏫' }
   ];
 
-  return (
-    <aside className="w-64 bg-background border-r border-border p-4 flex flex-col gap-6">
-      <Card className="p-4">
-        <h3 className="text-sm font-semibold text-muted-foreground mb-3">
-          Temas Visuais
-        </h3>
-        <div className="grid grid-cols-1 gap-2">
-          {themes.map((theme) => {
-            const IconComponent = theme.icon;
-            return (
-              <Button
-                key={theme.id}
-                variant={themeSelection === theme.id ? "default" : "ghost"}
-                className="justify-start gap-2 h-auto py-2"
-                onClick={() => setThemeSelection(theme.id)}
-              >
-                <IconComponent className="w-4 h-4" />
-                {theme.label}
-              </Button>
-            );
-          })}
-        </div>
-      </Card>
+  // Auto-collapse no mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-      <Card className="p-4">
-        <h3 className="text-sm font-semibold text-muted-foreground mb-3">
-          Personalidade do Assistente
-        </h3>
-        <div className="flex flex-col gap-2">
-          {personas.map((p) => {
-            const IconComponent = p.icon;
-            return (
-              <Button
-                key={p.id}
-                variant={persona === p.id ? "default" : "ghost"}
-                className="justify-start gap-2 h-auto py-3"
-                onClick={() => setPersona(p.id)}
-              >
-                <IconComponent className="w-4 h-4" />
-                {p.label}
-              </Button>
-            );
-          })}
+  return (
+    <aside className={`${isMobile ? 'w-16' : collapsed ? 'w-16' : 'w-64'} bg-card border-r border-border transition-all duration-300 flex flex-col overflow-hidden`}>
+      {/* Header com toggle */}
+      <div className="p-3 border-b border-border">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setCollapsed(!collapsed)}
+          className={`w-full ${isMobile || collapsed ? 'px-2' : 'justify-start'}`}
+        >
+          <Menu className="w-4 h-4" />
+          {!isMobile && !collapsed && <span className="ml-2">Menu</span>}
+        </Button>
+      </div>
+
+      <div className="flex-1 p-2 space-y-4 overflow-y-auto custom-scrollbar">
+        {/* Temas */}
+        <div className="space-y-2">
+          {!isMobile && !collapsed && (
+            <h3 className="text-xs font-semibold text-muted-foreground px-2">
+              Temas
+            </h3>
+          )}
+          <div className="space-y-1">
+            {themes.map((theme) => {
+              const IconComponent = theme.icon;
+              const isActive = themeSelection === theme.id;
+              return (
+                <Button
+                  key={theme.id}
+                  variant={isActive ? "default" : "ghost"}
+                  className={`w-full ${isMobile || collapsed ? 'px-2 justify-center' : 'justify-start'} h-10 transition-all duration-200`}
+                  onClick={() => setThemeSelection(theme.id)}
+                  style={isActive ? { backgroundColor: theme.color, color: 'white' } : {}}
+                >
+                  <IconComponent className="w-4 h-4" />
+                  {!isMobile && !collapsed && <span className="ml-2">{theme.label}</span>}
+                </Button>
+              );
+            })}
+          </div>
         </div>
-      </Card>
+
+        {/* Personas */}
+        <div className="space-y-2">
+          {!isMobile && !collapsed && (
+            <h3 className="text-xs font-semibold text-muted-foreground px-2">
+              Assistente
+            </h3>
+          )}
+          <div className="space-y-1">
+            {personas.map((p) => {
+              const IconComponent = p.icon;
+              const isActive = persona === p.id;
+              return (
+                <Button
+                  key={p.id}
+                  variant={isActive ? "default" : "ghost"}
+                  className={`w-full ${isMobile || collapsed ? 'px-2 justify-center' : 'justify-start'} h-10 transition-all duration-200`}
+                  onClick={() => setPersona(p.id)}
+                >
+                  {isMobile || collapsed ? (
+                    <span className="text-lg">{p.emoji}</span>
+                  ) : (
+                    <>
+                      <IconComponent className="w-4 h-4" />
+                      <span className="ml-2">{p.label}</span>
+                    </>
+                  )}
+                </Button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Seção de figurinhas */}
+        {!isMobile && !collapsed && (
+          <div className="space-y-2 pt-4 border-t border-border">
+            <h3 className="text-xs font-semibold text-muted-foreground px-2">
+              Meu Álbum
+            </h3>
+            <Button
+              variant="ghost"
+              className="w-full justify-start h-10"
+            >
+              <Star className="w-4 h-4" />
+              <span className="ml-2">Figurinhas (0)</span>
+            </Button>
+          </div>
+        )}
+      </div>
     </aside>
   );
 };
