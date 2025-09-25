@@ -39,29 +39,26 @@ export const Sidebar = ({
     { id: 'professor', icon: GraduationCap, label: 'Professor(a)', emoji: '👨‍🏫' }
   ];
 
-  // Auto-collapse no mobile
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-
   return (
-    <aside className={`${isMobile ? 'w-16' : collapsed ? 'w-16' : 'w-64'} bg-card border-r border-border transition-all duration-300 flex flex-col overflow-hidden`}>
+    <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-card border-r border-border transition-all duration-300 flex flex-col overflow-hidden md:relative absolute z-40 h-full md:h-auto`}>
       {/* Header com toggle */}
       <div className="p-3 border-b border-border">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setCollapsed(!collapsed)}
-          className={`w-full ${isMobile || collapsed ? 'px-2' : 'justify-start'}`}
+          className={`w-full ${collapsed ? 'px-2' : 'justify-start'}`}
         >
           <Menu className="w-4 h-4" />
-          {!isMobile && !collapsed && <span className="ml-2">Menu</span>}
+          {!collapsed && <span className="ml-2 hidden md:inline">Menu</span>}
         </Button>
       </div>
 
       <div className="flex-1 p-2 space-y-4 overflow-y-auto custom-scrollbar">
         {/* Temas */}
         <div className="space-y-2">
-          {!isMobile && !collapsed && (
-            <h3 className="text-xs font-semibold text-muted-foreground px-2">
+          {!collapsed && (
+            <h3 className="text-xs font-semibold text-muted-foreground px-2 hidden md:block">
               Temas
             </h3>
           )}
@@ -73,12 +70,12 @@ export const Sidebar = ({
                 <Button
                   key={theme.id}
                   variant={isActive ? "default" : "ghost"}
-                  className={`w-full ${isMobile || collapsed ? 'px-2 justify-center' : 'justify-start'} h-10 transition-all duration-200`}
+                  className={`w-full ${collapsed ? 'px-2 justify-center' : 'justify-start'} h-10 transition-all duration-200`}
                   onClick={() => setThemeSelection(theme.id)}
                   style={isActive ? { backgroundColor: theme.color, color: 'white' } : {}}
                 >
                   <IconComponent className="w-4 h-4" />
-                  {!isMobile && !collapsed && <span className="ml-2">{theme.label}</span>}
+                  {!collapsed && <span className="ml-2 hidden md:inline">{theme.label}</span>}
                 </Button>
               );
             })}
@@ -87,8 +84,8 @@ export const Sidebar = ({
 
         {/* Personas */}
         <div className="space-y-2">
-          {!isMobile && !collapsed && (
-            <h3 className="text-xs font-semibold text-muted-foreground px-2">
+          {!collapsed && (
+            <h3 className="text-xs font-semibold text-muted-foreground px-2 hidden md:block">
               Assistente
             </h3>
           )}
@@ -100,14 +97,14 @@ export const Sidebar = ({
                 <Button
                   key={p.id}
                   variant={isActive ? "default" : "ghost"}
-                  className={`w-full ${isMobile || collapsed ? 'px-2 justify-center' : 'justify-start'} h-10 transition-all duration-200`}
+                  className={`w-full ${collapsed ? 'px-2 justify-center' : 'justify-start'} h-10 transition-all duration-200`}
                   onClick={() => setPersona(p.id)}
                 >
-                  {isMobile || collapsed ? (
+                  {collapsed ? (
                     <span className="text-lg">{p.emoji}</span>
                   ) : (
                     <>
-                      <IconComponent className="w-4 h-4" />
+                      <IconComponent className="w-4 h-4 md:inline" />
                       <span className="ml-2">{p.label}</span>
                     </>
                   )}
@@ -118,9 +115,9 @@ export const Sidebar = ({
         </div>
 
         {/* Seção de figurinhas */}
-        {!isMobile && !collapsed && (
+        {!collapsed && (
           <div className="space-y-2 pt-4 border-t border-border">
-            <h3 className="text-xs font-semibold text-muted-foreground px-2">
+            <h3 className="text-xs font-semibold text-muted-foreground px-2 hidden md:block">
               Meu Álbum
             </h3>
             <Button
@@ -128,7 +125,7 @@ export const Sidebar = ({
               className="w-full justify-start h-10"
             >
               <Star className="w-4 h-4" />
-              <span className="ml-2">Figurinhas (0)</span>
+              <span className="ml-2 hidden md:inline">Figurinhas (0)</span>
             </Button>
           </div>
         )}

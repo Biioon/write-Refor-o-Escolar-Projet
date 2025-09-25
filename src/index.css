@@ -133,6 +133,19 @@ All colors MUST be HSL.
     touch-action: manipulation;
   }
   
+  /* Prevent horizontal scroll */
+  html, body {
+    overflow-x: hidden;
+  }
+  
+  /* Mobile viewport fix */
+  @media (max-width: 768px) {
+    .min-h-screen {
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+  }
+  
   /* Responsive images */
   img {
     max-width: 100%;

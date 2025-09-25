@@ -276,7 +276,7 @@ const Index = () => {
   }, [themeSelection]);
 
   return (
-    <div className="flex flex-col h-screen bg-background overflow-hidden">
+    <div className="flex flex-col h-screen bg-background overflow-hidden" data-theme={themeSelection}>
       <Navbar user={user} onAuthOpen={() => setAuthOpen(true)} onSignOut={signOut} />
       
       <div className="flex flex-1 overflow-hidden">

@@ -89,17 +89,29 @@ export const ChatArea = ({
     <div className="flex-1 flex flex-col bg-card">
       {/* Mobile settings panel */}
       <div className="md:hidden bg-secondary/50 border-b border-border">
-        <div className="flex items-center justify-between p-3">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between p-3 gap-3">
+          <div className="flex items-center gap-2 flex-1">
             <span className="text-sm font-medium">Persona:</span>
             <select 
               value={persona || 'amigo'} 
               onChange={(e) => setPersona?.(e.target.value)}
-              className="bg-secondary text-foreground text-sm rounded px-2 py-1 border border-border"
+              className="bg-secondary text-foreground text-sm rounded px-2 py-1 border border-border flex-1"
             >
               <option value="amigo">👥 Amigo</option>
               <option value="professor">👨‍🏫 Professor</option>
               <option value="mentor">🧙‍♂️ Mentor</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Tema:</span>
+            <select 
+              value={themeSelection || 'default'} 
+              onChange={(e) => setThemeSelection?.(e.target.value)}
+              className="bg-secondary text-foreground text-sm rounded px-2 py-1 border border-border"
+            >
+              <option value="default">🎨 Padrão</option>
+              <option value="aventura">🌲 Aventura</option>
+              <option value="espaco">🚀 Espaço</option>
             </select>
           </div>
         </div>
