@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { callLLM, sendDataToWebhook } from "@/lib/supabase";
-import { Navbar } from "@/components/Navbar";
-import { Sidebar } from "@/components/Sidebar";
 import { ChatArea } from "@/components/ChatArea";
 import { AuthModal } from "@/components/AuthModal";
+import { ModernLayout } from "@/components/ModernLayout";
+import { StudioPreview } from "@/components/StudioPreview";
+import { RewardAnimation } from "@/components/RewardAnimation";
 import { toast } from "@/hooks/use-toast";
 import { sanitizeText, sanitizeNote, validateTextLength, validateEmail, validatePassword } from "@/lib/validation";
 
@@ -19,12 +20,20 @@ interface Message {
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [persona, setPersona] = useState('amigo');
-  const [themeSelection, setThemeSelection] = useState('default');
+  const [themeSelection, setThemeSelection] = useState('aventura');
   const [tab, setTab] = useState('chat');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { 
+      id: 1, 
+      text: "Olá! Sou seu tutor virtual 🎓 O que vamos estudar hoje?", 
+      from: 'bot', 
+      ts: Date.now() - 1000 
+    }
+  ]);
   const [input, setInput] = useState('');
   const [authOpen, setAuthOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showReward, setShowReward] = useState(false);
 
   // Check for existing session on mount
   useEffect(() => {
@@ -275,23 +284,28 @@ const Index = () => {
     document.documentElement.setAttribute('data-theme', themeSelection);
   }, [themeSelection]);
 
+  const triggerReward = () => {
+    setShowReward(true);
+    setTimeout(() => setShowReward(false), 3000);
+  };
+
   return (
-    <div className="flex flex-col h-screen bg-background overflow-hidden" data-theme={themeSelection}>
-      <Navbar user={user} onAuthOpen={() => setAuthOpen(true)} onSignOut={signOut} />
-      
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar sempre visível - reorganizado para mobile */}
-        <div className="w-16 md:w-64 flex-shrink-0">
-          <Sidebar
-            persona={persona}
-            setPersona={setPersona}
-            themeSelection={themeSelection}
-            setThemeSelection={setThemeSelection}
-          />
-        </div>
+    <ModernLayout
+      theme={themeSelection}
+      onThemeChange={setThemeSelection}
+      persona={persona}
+      onPersonaChange={setPersona}
+    >
+      <div className="flex h-[calc(100vh-4rem)] overflow-hidden relative">
+        {/* Reward Animation Overlay */}
+        {showReward && (
+          <div className="fixed inset-0 z-50 pointer-events-none">
+            <RewardAnimation />
+          </div>
+        )}
         
-        {/* Chat area - responsivo */}
-        <div className="flex-1 min-w-0">
+        {/* Left Side - Chat */}
+        <div className="w-full md:w-1/2 flex flex-col border-r">
           <ChatArea
             tab={tab}
             setTab={setTab}
@@ -305,7 +319,13 @@ const Index = () => {
             setPersona={setPersona}
             themeSelection={themeSelection}
             setThemeSelection={setThemeSelection}
+            onTriggerReward={triggerReward}
           />
+        </div>
+        
+        {/* Right Side - Studio Preview */}
+        <div className="hidden md:flex md:w-1/2 p-4">
+          <StudioPreview onTriggerReward={triggerReward} />
         </div>
       </div>
 
@@ -315,7 +335,7 @@ const Index = () => {
         onSignIn={signIn}
         onSignUp={signUp}
       />
-    </div>
+    </ModernLayout>
   );
 };
 
